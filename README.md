@@ -8,6 +8,9 @@ Advanced version has seperate modifiers for friendly damage and enemy damage. Si
 
 ## Changelog
 
+Version 1.0.1
+- Micro optimizations.
+
 Version 1.0.0
 - Updated syntax to Source Pawn 1.7.
 - Micro optimizations.
