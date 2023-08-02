@@ -5,7 +5,7 @@
 #include <sdktools>
 #include <sdkhooks>
 
-#define PLUGIN_VERSION "1.0.0"
+#define PLUGIN_VERSION "1.0.1"
 
 #define DEBUG 0
 #define TEST_DEBUG 0
@@ -19,7 +19,6 @@
 #define CLASSNAME_MELEE_WPN "weapon_melee"
 #define CLASSNAME_WITCH "witch"
 
-static char damageModConfigFile[PLATFORM_MAX_PATH];
 static Handle keyValueHolder;
 static Handle weaponIndexTrie;
 
@@ -74,17 +73,15 @@ static void ReloadKeyValues()
 	if (weaponIndexTrie != INVALID_HANDLE)
 		CloseHandle(weaponIndexTrie);
 	weaponIndexTrie = CreateTrie();
-
-	BuildPath(Path_SM, damageModConfigFile, sizeof(damageModConfigFile), "configs/l4d2damagemod.cfg");
+    char damageModConfigFile[PLATFORM_MAX_PATH];
+    BuildPath(Path_SM, damageModConfigFile, sizeof(damageModConfigFile), "configs/l4d2damagemod.cfg");
 	if(!FileExists(damageModConfigFile)) 
 		SetFailState("l4d2damagemod.cfg cannot be read ... FATAL ERROR!");
-	
 	if (keyValueHolder != INVALID_HANDLE)
 		CloseHandle(keyValueHolder);
 	keyValueHolder = CreateKeyValues("l4d2damagemod");
 	FileToKeyValues(keyValueHolder, damageModConfigFile);
 	KvRewind(keyValueHolder);
-	
 	if (KvGotoFirstSubKey(keyValueHolder)) {
 		int i = 0;
 		char buffer[CLASS_STRINGLENGHT];
@@ -150,15 +147,13 @@ public Action OnTakeDamage(int victim, int& attacker, int& inflictor, float& dam
 	DebugPrintToAll("configurable class name: %s", classname);
 	#endif
 
-	int i;
-	if (!GetTrieValue(weaponIndexTrie, classname, i))
-		return Plugin_Continue;
-	
-	//attacker human player || attacker witch or common, victim human player
-	if (bHumanAttacker || (victim <= MaxClients && IsClientInGame(victim)))
+    int i;
+
+	//get trie value && attacker human player || attacker witch or common, victim human player
+	if (GetTrieValue(weaponIndexTrie, classname, i) && (bHumanAttacker || (victim <= MaxClients && IsClientInGame(victim))))
 		damage *= damageModArray[i];
 
-	//entity-to-entity damage is unhandled
+	//entity-to-entity damage is unhandled, or no trie value
 	else
 		return Plugin_Continue;
 
