@@ -5,7 +5,7 @@
 #include <sdktools>
 #include <sdkhooks>
 
-#define PLUGIN_VERSION "1.0.1"
+#define PLUGIN_VERSION "1.0.2"
 
 #define DEBUG 0
 #define TEST_DEBUG 0
@@ -33,14 +33,17 @@ public Plugin myinfo =
 	url = "https://github.com/garamond13/L4D2-Damage-Mod-SDKHooks"
 };
 
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) 
+{	
+	if(GetEngineVersion() != Engine_Left4Dead2) {
+		strcopy(error, err_max, "Plugin only supports Left 4 Dead 2.");
+		return APLRes_SilentFailure;
+	}
+	return APLRes_Success; 
+}
+
 public void OnPluginStart()
 {
-	//l4d2 check
-	char game_name[CLASS_STRINGLENGHT];
-	GetGameFolderName(game_name, sizeof(game_name));
-	if (StrContains(game_name, "left4dead2", false) < 0)
-		SetFailState("Plugin supports L4D2 only.");
-
 	CreateConVar("l4d2_damage_mod_version", PLUGIN_VERSION, "L4D2 Damage Mod Version", FCVAR_REPLICATED | FCVAR_DONTRECORD);
 	RegAdminCmd("sm_reloaddamagemod", cmd_ReloadData, ADMFLAG_CHEATS, "Reload the setting file for live changes");
 }
