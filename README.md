@@ -9,6 +9,9 @@ Advanced version has seperate modifiers for friendly damage and enemy damage. Si
 ## Changelog
 
 Version 1.0.2 (simple)
+- Small change.
+
+Version 1.0.2 (simple)
 - Update L4D2 check.
 
 Version 1.0.1 (simple)
