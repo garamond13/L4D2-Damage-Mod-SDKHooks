@@ -8,6 +8,12 @@ Advanced version has seperate modifiers for friendly damage and enemy damage. Si
 
 ## Changelog
 
+Version 2.0.0
+- Remove admin cmd.
+- Remove version convar.
+- Remove melee weapons.
+- Reduce max weapons to 32.
+
 Version 1.0.2 (simple)
 - Small change.
 
