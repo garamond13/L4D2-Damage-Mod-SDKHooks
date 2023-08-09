@@ -8,7 +8,7 @@ Advanced version has seperate modifiers for friendly damage and enemy damage. Si
 
 ## Changelog
 
-Version 2.0.0
+Version 2.0.0 (simple)
 - Remove admin cmd.
 - Remove version convar.
 - Remove melee weapons.
