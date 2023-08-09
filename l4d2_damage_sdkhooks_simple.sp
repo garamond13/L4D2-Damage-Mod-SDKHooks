@@ -5,19 +5,14 @@
 #include <sdktools>
 #include <sdkhooks>
 
-#define PLUGIN_VERSION "1.0.3"
+#define PLUGIN_VERSION "2.0.0"
 
 #define DEBUG 0
 #define TEST_DEBUG 0
 #define TEST_DEBUG_LOG 0
 
-#define	MAX_MODDED_WEAPONS 64
+#define	MAX_MODDED_WEAPONS 32
 #define	CLASS_STRINGLENGHT 32
-
-#define ENTPROP_MELEE_STRING "m_strMapSetScriptName"
-#define CLASSNAME_INFECTED "infected"
-#define CLASSNAME_MELEE_WPN "weapon_melee"
-#define CLASSNAME_WITCH "witch"
 
 static Handle keyValueHolder;
 static Handle weaponIndexTrie;
@@ -44,8 +39,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 public void OnPluginStart()
 {
-	CreateConVar("l4d2_damage_mod_version", PLUGIN_VERSION, "L4D2 Damage Mod Version", FCVAR_REPLICATED | FCVAR_DONTRECORD);
-	RegAdminCmd("sm_reloaddamagemod", cmd_ReloadData, ADMFLAG_CHEATS, "Reload the setting file for live changes");
+	LoadKeyValues();
 }
 
 public void OnClientPutInServer(int client)
@@ -55,23 +49,11 @@ public void OnClientPutInServer(int client)
 
 public void OnEntityCreated(int entity, const char[] classname)
 {
-	if (StrEqual(classname, CLASSNAME_INFECTED, false) || StrEqual(classname, CLASSNAME_WITCH, false))
+	if (!strcmp(classname, "infected") || !strcmp(classname, "witch"))
 		SDKHook(entity, SDKHook_OnTakeDamage, OnTakeDamage);
 }
 
-public void OnMapStart()
-{
-	ReloadKeyValues();
-}
-
-public Action cmd_ReloadData(int client, int args)
-{
-	ReloadKeyValues();
-	ReplyToCommand(client, "L4D2 Damage Mod config file re-loaded");
-	return Plugin_Handled;
-}
-
-static void ReloadKeyValues()
+static void LoadKeyValues()
 {
 	if (weaponIndexTrie != INVALID_HANDLE)
 		CloseHandle(weaponIndexTrie);
@@ -142,17 +124,13 @@ public Action OnTakeDamage(int victim, int& attacker, int& inflictor, float& dam
 	else
 		GetEdictClassname(inflictor, classname, sizeof(classname));
 	
-	// subcase melee weapons
-	if (StrEqual(classname, CLASSNAME_MELEE_WPN))
-		GetEntPropString(GetPlayerWeaponSlot(attacker, 1), Prop_Data, ENTPROP_MELEE_STRING, classname, sizeof(classname));
-	
 	#if DEBUG
 	DebugPrintToAll("configurable class name: %s", classname);
 	#endif
 
-    int i;
 
 	//get trie value && attacker human player || attacker witch or common, victim human player
+    int i;
 	if (GetTrieValue(weaponIndexTrie, classname, i) && (bHumanAttacker || (victim <= MaxClients && IsClientInGame(victim))))
 		damage *= damageModArray[i];
 
