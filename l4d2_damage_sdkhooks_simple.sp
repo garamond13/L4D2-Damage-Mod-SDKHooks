@@ -5,7 +5,7 @@
 #include <sdktools>
 #include <sdkhooks>
 
-#define PLUGIN_VERSION "2.0.0"
+#define PLUGIN_VERSION "2.0.1"
 
 #define DEBUG 0
 #define TEST_DEBUG 0
@@ -58,8 +58,8 @@ static void LoadKeyValues()
 	if (weaponIndexTrie != INVALID_HANDLE)
 		CloseHandle(weaponIndexTrie);
 	weaponIndexTrie = CreateTrie();
-    char damageModConfigFile[PLATFORM_MAX_PATH];
-    BuildPath(Path_SM, damageModConfigFile, sizeof(damageModConfigFile), "configs/l4d2damagemod.cfg");
+	char damageModConfigFile[PLATFORM_MAX_PATH];
+	BuildPath(Path_SM, damageModConfigFile, sizeof(damageModConfigFile), "configs/l4d2damagemod.cfg");
 	if(!FileExists(damageModConfigFile)) 
 		SetFailState("l4d2damagemod.cfg cannot be read ... FATAL ERROR!");
 	if (keyValueHolder != INVALID_HANDLE)
@@ -106,21 +106,13 @@ public Action OnTakeDamage(int victim, int& attacker, int& inflictor, float& dam
 	
 	char classname[CLASS_STRINGLENGHT];
 
-	// case: player entity attacks
-	bool bHumanAttacker = attacker > 0 && attacker <= MaxClients && IsClientInGame(attacker);
-	
-	if (bHumanAttacker) {
+	bool bHumanAttacker = IsClientInGame(attacker);
+
+	// case: attack with an equipped weapon (guns, claws)
+	if (bHumanAttacker && attacker == inflictor)
+		GetClientWeapon(inflictor, classname, sizeof(classname));
 		
-		// case: attack with an equipped weapon (guns, claws)
-		if (attacker == inflictor)
-			GetClientWeapon(inflictor, classname, sizeof(classname));
-			
-		// tank special case?
-		else
-			GetEdictClassname(inflictor, classname, sizeof(classname));
-	}
-	
-	// case: other entity inflicts damage (eg throwable, ability)
+	// tank special case? || case: other entity inflicts damage (eg throwable, ability)
 	else
 		GetEdictClassname(inflictor, classname, sizeof(classname));
 	
@@ -128,10 +120,9 @@ public Action OnTakeDamage(int victim, int& attacker, int& inflictor, float& dam
 	DebugPrintToAll("configurable class name: %s", classname);
 	#endif
 
-
 	//get trie value && attacker human player || attacker witch or common, victim human player
-    int i;
-	if (GetTrieValue(weaponIndexTrie, classname, i) && (bHumanAttacker || (victim <= MaxClients && IsClientInGame(victim))))
+	int i;
+	if (GetTrieValue(weaponIndexTrie, classname, i) && (bHumanAttacker || IsClientInGame(victim)))
 		damage *= damageModArray[i];
 
 	//entity-to-entity damage is unhandled, or no trie value
