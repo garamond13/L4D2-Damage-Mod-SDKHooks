@@ -5,7 +5,7 @@
 #include <sdktools>
 #include <sdkhooks>
 
-#define VERSION "3.0.0"
+#define VERSION "3.0.1"
 
 #define DEBUG 0
 
@@ -86,7 +86,7 @@ public Action OnTakeDamage(int victim, int& attacker, int& inflictor, float& dam
 	char classname[CLASS_LENGHT];
 
 	//attack with equipped weapon
-	if (attacker && attacker <= MaxClients && IsClientInGame(attacker) && attacker == inflictor)
+	if (attacker > 0 && attacker <= MaxClients && IsClientInGame(attacker) && attacker == inflictor)
 		GetClientWeapon(inflictor, classname, sizeof(classname));
 	
 	//other source of damage
