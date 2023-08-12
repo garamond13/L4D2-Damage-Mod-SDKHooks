@@ -5,7 +5,7 @@
 #include <sdktools>
 #include <sdkhooks>
 
-#define VERSION "3.0.2"
+#define VERSION "3.0.3"
 
 #define DEBUG 0
 
@@ -58,16 +58,16 @@ public void OnPluginStart()
 
 public void OnClientPutInServer(int client)
 {
-	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamage);
+	SDKHook(client, SDKHook_OnTakeDamage, on_take_damage);
 }
 
 public void OnEntityCreated(int entity, const char[] classname)
 {
 	if (!strcmp(classname, "infected") || !strcmp(classname, "witch"))
-		SDKHook(entity, SDKHook_OnTakeDamage, OnTakeDamage);
+		SDKHook(entity, SDKHook_OnTakeDamage, on_take_damage);
 }
 
-public Action OnTakeDamage(int victim, int& attacker, int& inflictor, float& damage, int& damagetype)
+Action on_take_damage(int victim, int& attacker, int& inflictor, float& damage, int& damagetype)
 {
 	#if DEBUG
 	PrintToChatAll("attacker %i, inflictor %i dealt %f damage to victim %i", attacker, inflictor, damage, victim);
