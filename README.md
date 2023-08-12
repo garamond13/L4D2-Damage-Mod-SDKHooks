@@ -7,6 +7,8 @@ Bsed on https://github.com/wyxls/SourceModPlugins-L4D2/tree/master/l4d2_damage_s
 Advanced version has seperate modifiers for friendly damage and enemy damage. Simple version has a single modifier for both.
 
 ## Changelog
+Version 3.0.3 (simple)
+- Edit function.
 
 Version 3.0.2 (simple)
 - Remove l4d2 check.
