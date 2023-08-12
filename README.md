@@ -8,7 +8,10 @@ Advanced version has seperate modifiers for friendly damage and enemy damage. Si
 
 ## Changelog
 
-Version 3.0.1
+Version 3.0.2 (simple)
+- Remove l4d2 check.
+
+Version 3.0.1 (simple)
 - Prevent surprises.
 
 Version 3.0.0 (simple)
