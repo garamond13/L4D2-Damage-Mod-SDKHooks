@@ -5,7 +5,7 @@
 #include <sdktools>
 #include <sdkhooks>
 
-#define VERSION "3.0.1"
+#define VERSION "3.0.2"
 
 #define DEBUG 0
 
@@ -17,23 +17,13 @@ Handle weapon_index_trie;
 
 float damage_mods[MAX_WEAPONS];
 
-public Plugin myinfo =
-{
+public Plugin myinfo = {
 	name = "L4D2 Damage Mod SDKHooks Simple",
 	author = "Garamond, AtomicStryker",
 	description = "Modify damage",
 	version = VERSION,
 	url = "https://github.com/garamond13/L4D2-Damage-Mod-SDKHooks"
 };
-
-public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) 
-{	
-	if(GetEngineVersion() != Engine_Left4Dead2) {
-		strcopy(error, err_max, "Plugin only supports Left 4 Dead 2.");
-		return APLRes_SilentFailure;
-	}
-	return APLRes_Success; 
-}
 
 public void OnPluginStart()
 {
