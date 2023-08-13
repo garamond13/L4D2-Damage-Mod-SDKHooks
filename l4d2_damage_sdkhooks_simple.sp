@@ -1,11 +1,12 @@
-#pragma newdecls required
 #pragma semicolon 1
 
 #include <sourcemod>
 #include <sdktools>
 #include <sdkhooks>
 
-#define VERSION "3.0.3"
+#pragma newdecls required
+
+#define VERSION "3.0.4"
 
 #define DEBUG 0
 
@@ -67,7 +68,7 @@ public void OnEntityCreated(int entity, const char[] classname)
 		SDKHook(entity, SDKHook_OnTakeDamage, on_take_damage);
 }
 
-Action on_take_damage(int victim, int& attacker, int& inflictor, float& damage, int& damagetype)
+public Action on_take_damage(int victim, int& attacker, int& inflictor, float& damage, int& damagetype)
 {
 	#if DEBUG
 	PrintToChatAll("attacker %i, inflictor %i dealt %f damage to victim %i", attacker, inflictor, damage, victim);
