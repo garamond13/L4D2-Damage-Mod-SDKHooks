@@ -1,12 +1,10 @@
-#pragma semicolon 1
-
 #include <sourcemod>
-#include <sdktools>
 #include <sdkhooks>
 
+#pragma semicolon 1
 #pragma newdecls required
 
-#define VERSION "3.0.4"
+#define VERSION "3.0.5"
 
 #define DEBUG 0
 
