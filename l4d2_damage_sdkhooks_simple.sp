@@ -5,17 +5,11 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define VERSION "3.0.6"
+#define VERSION "3.1.0"
 
 #define DEBUG 0
 
-#define	MAX_WEAPONS 32
-#define CLASS_LENGHT 32
-
-Handle key_value_holder;
-Handle weapon_index_trie;
-
-float damage_mods[MAX_WEAPONS];
+Handle weapon_trie;
 
 public Plugin myinfo = {
 	name = "L4D2 Damage Mod SDKHooks Simple",
@@ -27,33 +21,30 @@ public Plugin myinfo = {
 
 public void OnPluginStart()
 {
-	weapon_index_trie = CreateTrie();
-	char config[PLATFORM_MAX_PATH];
-	
 	//get config
-	BuildPath(Path_SM, config, sizeof(config), "configs/l4d2damagemod.cfg");
+	char config[PLATFORM_MAX_PATH];
+	BuildPath(Path_SM, config, sizeof(config), "configs/l4d2_damagemod.txt");
 	if(!FileExists(config)) 
-		SetFailState("l4d2damagemod.cfg cannot be read ... FATAL ERROR!");
+		SetFailState("l4d2_damagemod.txt cannot be read ... FATAL ERROR!");
 
-	key_value_holder = CreateKeyValues("l4d2damagemod");
-	FileToKeyValues(key_value_holder, config);
-	KvRewind(key_value_holder);
-
+	Handle key_values = CreateKeyValues("l4d2_damagemod");
+	FileToKeyValues(key_values, config);
+	weapon_trie = CreateTrie();
+	
 	//parse config
-	if (KvGotoFirstSubKey(key_value_holder)) {
-		int i = 0;
-		char buffer[CLASS_LENGHT];
+	if (KvGotoFirstSubKey(key_values)) {
+		char weapon_class[32];
+		char modifier[16];
 		do {
-			KvGetString(key_value_holder, "weapon_class", buffer, sizeof(buffer));
-			SetTrieValue(weapon_index_trie, buffer, i);
-			KvGetString(key_value_holder, "modifier", buffer, sizeof(buffer), "1.0");
-			damage_mods[i] = StringToFloat(buffer);
-			i++;
+			KvGetString(key_values, "weapon_class", weapon_class, sizeof(weapon_class));
+			KvGetString(key_values, "modifier", modifier, sizeof(modifier), "1.0");
+			SetTrieValue(weapon_trie, weapon_class, StringToFloat(modifier));
 		}
-		while (KvGotoNextKey(key_value_holder));
+		while (KvGotoNextKey(key_values));
 	}
 	else
-		SetFailState("l4d2damagemod.cfg cannnot be parsed ... No subkeys found!");
+		SetFailState("l4d2_damagemod.txt cannnot be parsed ... No subkeys found!");
+	CloseHandle(key_values);
 }
 
 public void OnClientPutInServer(int client)
@@ -73,7 +64,7 @@ public Action on_take_damage(int victim, int& attacker, int& inflictor, float& d
 	PrintToChatAll("attacker %i, inflictor %i dealt %f damage to victim %i", attacker, inflictor, damage, victim);
 	#endif
 
-	char classname[CLASS_LENGHT];
+	char classname[32];
 
 	//attack with equipped weapon
 	if (attacker > 0 && attacker <= MaxClients && IsClientInGame(attacker) && attacker == inflictor)
@@ -88,9 +79,9 @@ public Action on_take_damage(int victim, int& attacker, int& inflictor, float& d
 	#endif
 
 	//get damage modifier
-	int i;
-	if (GetTrieValue(weapon_index_trie, classname, i)) {
-		damage *= damage_mods[i];
+	float modifier;
+	if (GetTrieValue(weapon_trie, classname, modifier)) {
+		damage *= modifier;
 		
 		#if DEBUG
 		PrintToChatAll("Damage modded by %f to %f", damage_mods[i], damage);
