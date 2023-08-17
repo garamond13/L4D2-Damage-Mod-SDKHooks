@@ -6,6 +6,10 @@ Bsed on https://github.com/wyxls/SourceModPlugins-L4D2/tree/master/l4d2_damage_s
 
 Advanced version has seperate modifiers for friendly damage and enemy damage. Simple version has a single modifier for both.
 
+## Note
+
+It requires config with key values.
+
 ## Changelog
 
 Version 3.1.0 (simple)
