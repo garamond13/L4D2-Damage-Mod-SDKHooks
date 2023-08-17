@@ -8,6 +8,9 @@ Advanced version has seperate modifiers for friendly damage and enemy damage. Si
 
 ## Changelog
 
+Version 3.1.0 (simple)
+- Minor changes.
+
 Version 3.0.6 (simple)
 - Small changes.
   
